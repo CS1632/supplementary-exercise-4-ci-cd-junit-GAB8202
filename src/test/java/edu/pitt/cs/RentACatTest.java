@@ -18,7 +18,7 @@ public class RentACatTest {
 	 * objects used as a baseline for running tests. The test fixture is initialized
 	 * using the @Before setUp method which runs before every test case. The test
 	 * fixture is removed using the @After tearDown method which runs after each
-	 * test case.
+	 * test case. Test
 	 */
 
 	RentACat r; // Object to test
@@ -30,7 +30,7 @@ public class RentACatTest {
 	public void setUp() throws Exception {
 		// Turn on automatic bug injection in the Cat class, to emulate a buggy Cat.
 		// Your unit tests should work regardless of these bugs.
-		//Config.setBuggyRentACat(true);
+		// Config.setBuggyRentACat(true);
 		Cat.bugInjectionOn = true;
 
 		// INITIALIZE THE TEST FIXTURE
@@ -113,7 +113,7 @@ public class RentACatTest {
 		// TODO
 		Boolean catFound = r.catAvailable(2);
 		assertFalse("Cat was available at id 2", catFound);
-		
+
 	}
 
 	/**
@@ -212,7 +212,7 @@ public class RentACatTest {
 	@Test
 	public void testListCatsNumCats0() {
 		// TODO
-		assertEquals("No cats but listCats() returns non-empty string","", r.listCats());
+		assertEquals("No cats but listCats() returns non-empty string", "", r.listCats());
 	}
 
 	/**
@@ -235,9 +235,10 @@ public class RentACatTest {
 		r.addCat(c1);
 		r.addCat(c2);
 		r.addCat(c3);
-		
+
 		String catList = r.listCats();
-		assertEquals("3 cats and listCats() does not return the expected string","ID 1. Jennyanydots\nID 2. Old Deuteronomy\nID 3. Mistoffelees\n", catList);
+		assertEquals("3 cats and listCats() does not return the expected string",
+				"ID 1. Jennyanydots\nID 2. Old Deuteronomy\nID 3. Mistoffelees\n", catList);
 	}
 
 	/**
