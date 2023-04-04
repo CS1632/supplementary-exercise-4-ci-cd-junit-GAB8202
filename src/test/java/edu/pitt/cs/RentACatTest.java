@@ -2,6 +2,7 @@ package edu.pitt.cs;
 
 import org.junit.Test;
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.times;
 
 import org.junit.After;
 import org.junit.Before;
@@ -29,6 +30,7 @@ public class RentACatTest {
 	public void setUp() throws Exception {
 		// Turn on automatic bug injection in the Cat class, to emulate a buggy Cat.
 		// Your unit tests should work regardless of these bugs.
+		//Config.setBuggyRentACat(true);
 		Cat.bugInjectionOn = true;
 
 		// INITIALIZE THE TEST FIXTURE
@@ -36,13 +38,16 @@ public class RentACatTest {
 		r = RentACat.createInstance();
 
 		// 2. Create an unrented Cat with ID 1 and name "Jennyanydots", assign to c1
-		// TODO: Fill in
+		c1 = Mockito.mock(Cat.class);
+		Mockito.when(c1.getId()).thenReturn(1);
 
 		// 3. Create an unrented Cat with ID 2 and name "Old Deuteronomy", assign to c2
-		// TODO: Fill in
+		c2 = Mockito.mock(Cat.class);
+		Mockito.when(c2.getId()).thenReturn(2);
 
 		// 4. Create an unrented Cat with ID 3 and name "Mistoffelees", assign to c3
-		// TODO: Fill in
+		c3 = Mockito.mock(Cat.class);
+		Mockito.when(c3.getId()).thenReturn(3);
 	}
 
 	@After
@@ -68,6 +73,7 @@ public class RentACatTest {
 	@Test
 	public void testGetCatNullNumCats0() {
 		// TODO
+		assertNull(r.getCat(2));
 	}
 
 	/**
@@ -84,6 +90,12 @@ public class RentACatTest {
 	@Test
 	public void testGetCatNumCats3() {
 		// TODO
+		r.addCat(c1);
+		r.addCat(c2);
+		r.addCat(c3);
+		Cat cat = r.getCat(2);
+		assertNotNull("Returned cat is null", cat);
+		assertEquals("Returned cat's id did not equal 2", 2, cat.getId());
 	}
 
 	/**
@@ -99,6 +111,9 @@ public class RentACatTest {
 	@Test
 	public void testCatAvailableFalseNumCats0() {
 		// TODO
+		Boolean catFound = r.catAvailable(2);
+		assertFalse("Cat was available at id 2", catFound);
+		
 	}
 
 	/**
@@ -116,6 +131,12 @@ public class RentACatTest {
 	@Test
 	public void testCatAvailableTrueNumCats3() {
 		// TODO
+		r.addCat(c1);
+		r.addCat(c2);
+		r.addCat(c3);
+		Mockito.when(c3.getRented()).thenReturn(true);
+		boolean catAvailable = r.catAvailable(2);
+		assertTrue("Cat was not available at id 2", catAvailable);
 	}
 
 	/**
@@ -132,7 +153,12 @@ public class RentACatTest {
 
 	@Test
 	public void testCatAvailableFalseNumCats3() {
-		// TODO
+		r.addCat(c1);
+		r.addCat(c2);
+		r.addCat(c3);
+		Mockito.when(c2.getRented()).thenReturn(true);
+		boolean catAvailable = r.catAvailable(2);
+		assertFalse("Cat was available at id 2", catAvailable);
 	}
 
 	/**
@@ -148,6 +174,9 @@ public class RentACatTest {
 	@Test
 	public void testCatExistsFalseNumCats0() {
 		// TODO
+		boolean exists = r.catExists(2);
+		assertFalse("Cat with an id of 2 does exist", exists);
+
 	}
 
 	/**
@@ -162,7 +191,12 @@ public class RentACatTest {
 
 	@Test
 	public void testCatExistsTrueNumCats3() {
-		// TODO
+		r.addCat(c1);
+		r.addCat(c2);
+		r.addCat(c3);
+
+		boolean exists = r.catExists(2);
+		assertTrue("Cat with an id of 2 does not exist", exists);
 	}
 
 	/**
@@ -178,6 +212,7 @@ public class RentACatTest {
 	@Test
 	public void testListCatsNumCats0() {
 		// TODO
+		assertEquals("No cats but listCats() returns non-empty string","", r.listCats());
 	}
 
 	/**
@@ -194,6 +229,15 @@ public class RentACatTest {
 	@Test
 	public void testListCatsNumCats3() {
 		// TODO
+		Mockito.when(c1.toString()).thenReturn("ID 1. Jennyanydots");
+		Mockito.when(c2.toString()).thenReturn("ID 2. Old Deuteronomy");
+		Mockito.when(c3.toString()).thenReturn("ID 3. Mistoffelees");
+		r.addCat(c1);
+		r.addCat(c2);
+		r.addCat(c3);
+		
+		String catList = r.listCats();
+		assertEquals("3 cats and listCats() does not return the expected string","ID 1. Jennyanydots\nID 2. Old Deuteronomy\nID 3. Mistoffelees\n", catList);
 	}
 
 	/**
@@ -209,6 +253,7 @@ public class RentACatTest {
 	@Test
 	public void testRentCatFailureNumCats0() {
 		// TODO
+		assertFalse(r.rentCat(2));
 	}
 
 	/**
@@ -230,6 +275,19 @@ public class RentACatTest {
 	@Test
 	public void testRentCatFailureNumCats3() {
 		// TODO
+		r.addCat(c1);
+		r.addCat(c2);
+		r.addCat(c3);
+		Mockito.when(c2.getRented()).thenReturn(true);
+
+		boolean catStatus = r.rentCat(2);
+
+		System.out.println("========= CAT STATUS=========" + "\n" + catStatus);
+
+		assertFalse(catStatus);
+		Mockito.verify(c1, times(0)).rentCat();
+		Mockito.verify(c2, times(0)).rentCat();
+		Mockito.verify(c3, times(0)).rentCat();
 	}
 
 	/**
@@ -245,6 +303,8 @@ public class RentACatTest {
 	@Test
 	public void testReturnCatFailureNumCats0() {
 		// TODO
+		boolean returned = r.returnCat(2);
+		assertFalse("Cat with an id of 2 was able to be returned", returned);
 	}
 
 	/**
@@ -266,6 +326,16 @@ public class RentACatTest {
 
 	@Test
 	public void testReturnCatNumCats3() {
-		// TODO
+		r.addCat(c1);
+		r.addCat(c2);
+		r.addCat(c3);
+		Mockito.when(c2.getRented()).thenReturn(true);
+
+		boolean returned = r.returnCat(2);
+		assertTrue("Cat with an id of 2 was unable to be returned", returned);
+		Mockito.verify(c2, Mockito.times(1)).returnCat();
+		Mockito.verify(c1, Mockito.times(0)).returnCat();
+		Mockito.verify(c3, Mockito.times(0)).returnCat();
+
 	}
 }
